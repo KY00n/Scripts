@@ -149,7 +149,7 @@ public class TimeManager : MonoBehaviour
         }
 #endif
 
-        // DesiredFrameRateの更新
+        // TargetFrameRateの更新
 
         if (TargetFrameRate <= 0)
         {
