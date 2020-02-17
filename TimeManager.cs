@@ -7,6 +7,7 @@ using UnityEngine;
 /// <remarks>
 /// ・アタッチしたものを(始めの)シーンに一つ置くだけで良い。複数のシーンに配置していても多重処理しないので安心。
 /// ・ExecutionOrderは<see cref="Update"/>で<see cref="Time.deltaTime"/>を使う処理より早く。
+/// ・<see cref="FPSAdjustment"/>はNoneのみで。
 /// </remarks>
 [DefaultExecutionOrder(-1)]
 public class TimeManager : MonoBehaviour
