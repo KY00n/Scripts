@@ -1,23 +1,28 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+// DontDestroyOnLoadなシングルトン。
+
 /// <summary>
 /// クラシックなSTGの処理落ちを再現するための独自delta timeなどを管理する。
 /// </summary>
-/// <remarks>
-/// ・アタッチしたものを(始めの)シーンに一つ置くだけで良い。複数のシーンに配置していても多重処理しないので安心。
-/// ・ExecutionOrderは<see cref="Update"/>で<see cref="Time.deltaTime"/>を使う処理より早く。
-/// ・<see cref="FPSAdjustment"/>はNoneのみで。
-/// </remarks>
+// 念のためつけておく
 [DefaultExecutionOrder(-1)]
 public class TimeManager : MonoBehaviour
 {
     /// <summary>
-    /// 希望のフレームレートに近づけるの処理の種類。
+    /// 希望のフレームレートに近づけるFPS調整処理の種類。
     /// </summary>
     public enum FPSAdjustmentType
     {
+        /// <summary>
+        /// FPS調整をしない。
+        /// </summary>
         None,
+        /// <summary>
+        /// <see cref="CurrentFPS"/>をみてtarget frame rateをいじる
+        /// 単純な方法でFPSを調節する。
+        /// </summary>
         FromFPSCheck,
     }
 
@@ -78,6 +83,10 @@ public class TimeManager : MonoBehaviour
     /// STGなオブジェクトを制御するコンテキストで扱うdelta time。
     /// </summary>
     public static float DeltaTime { get; private set; }
+    /// <summary>
+    /// time scaleに影響されない、STGなオブジェクトを制御するコンテキストで扱うdelta time。
+    /// </summary>
+    public static float UnscaledDeltaTime { get; private set; }
     /// <summary>
     /// STGなオブジェクトを制御するコンテキストで扱うtime scale。
     /// </summary>
@@ -149,15 +158,17 @@ public class TimeManager : MonoBehaviour
         }
 #endif
 
-        // TargetFrameRateの更新
+        // 独自delta timeの更新
 
         if (TargetFrameRate <= 0)
         {
+            UnscaledDeltaTime = Time.unscaledDeltaTime;
             DeltaTime = Time.deltaTime;
         }
         else
         {
-            DeltaTime = (1f / TargetFrameRate) * Time.timeScale;
+            UnscaledDeltaTime = 1f / TargetFrameRate;
+            DeltaTime = UnscaledDeltaTime * Time.timeScale;
         }
 
 
